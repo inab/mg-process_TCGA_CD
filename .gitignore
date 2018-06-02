@@ -1,8 +1,7 @@
 *.txt
 .python-version
 *.pyc
-env
-env/*
+.py*Env
 *~
 *.DS_Store
 *_build*
