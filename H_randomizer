@@ -11,7 +11,7 @@ case "$BASEDIR" in
 		;;
 esac
 
-PYBASEDIR="${BASEDIR}/.py3Env"
+PYBASEDIR="${BASEDIR}/.py2Env"
 # Is there a prepared Python environment??
 if [ -d "$PYBASEDIR" ] ; then
 	source "${PYBASEDIR}/bin/activate"
