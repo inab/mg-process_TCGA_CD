@@ -1,13 +1,13 @@
 {
-  "_id": "process_test",
-  "name": "Process Test",
+  "_id": "H_randomizer",
+  "name": "Hemoglobin Randomizer Test",
   "title": "Test Workflow",
   "short_description": "Generates file with some text",
   "owner": {
-    "institution": "EMBL-EBI",
-    "author": "Mark McDowall",
-    "contact": "mcdowall@ebi.ac.uk",
-    "url": "https://github.com/Multiscale-Genomics/mg-process-test"
+    "institution": "BSC-CNS",
+    "author": "José María Fernández",
+    "contact": "jose.m.fernandez@bsc.es",
+    "url": "https://github.com/inab/mg-process_H_randomizer"
   },
   "external": true,
   "has_custom_viewer": false,
@@ -17,7 +17,7 @@
   "infrastructure": {
     "memory": 1,
     "cpus": 1,
-    "executable": "/home/pmes/code/mg-process-test/process_test.py",
+    "executable": "/home/pmes/code/mg-process-test/H_randomizer.py",
     "clouds": {}
   },
   "input_files": [
@@ -44,7 +44,7 @@
         "file_type": "TXT",
         "meta_data": {
           "visible": true,
-          "tool": "process_test",
+          "tool": "H_randomizer",
           "description": "Output"
         },
         "file_path": "test.txt",

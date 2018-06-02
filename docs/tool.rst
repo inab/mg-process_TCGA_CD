@@ -20,5 +20,5 @@ Tools
 
    Test Tool
    -----------
-   .. autoclass:: tool.testTool.testTool
+   .. autoclass:: tool.H_randomizer.H_randomizer
       :members:

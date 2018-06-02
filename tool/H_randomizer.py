@@ -39,7 +39,7 @@ from basic_modules.metadata import Metadata
 
 # ------------------------------------------------------------------------------
 
-class testTool(Tool):
+class H_randomizer(Tool):
     """
     Tool for writing to a file
     """

@@ -20,10 +20,10 @@ from __future__ import print_function
 import os.path
 import pytest
 
-from process_test import process_test
+from H_randomizer import process_H_randomizer
 from basic_modules.metadata import Metadata
 
-@pytest.mark.testTool
+@pytest.mark.H_randomizer
 def test_test_pipeline():
     """
     Test case to ensure that the Genome indexing pipeline code works.
@@ -51,7 +51,7 @@ def test_test_pipeline():
         "output": resource_path + 'test.txt',
     }
 
-    tt_handle = process_test()
+    tt_handle = process_H_randomizer()
     tt_files, tt_meta = tt_handle.run(input_files, metadata, files_out)
 
     # Add tests for all files created

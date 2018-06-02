@@ -18,7 +18,7 @@
 from setuptools import setup, find_packages
 
 setup(
-    name='mg_process_test',
+    name='mg_process_H_randomizer',
     packages=find_packages(),
     include_package_data=True,
     install_requires=[

@@ -1,0 +1,22 @@
+#!/bin/bash
+
+REALPATH="$(realpath "$0")"
+BASEDIR="$(dirname "$REALPATH")"
+case "$BASEDIR" in
+	/*)
+		true
+		;;
+	*)
+		BASEDIR="${PWD}/$BASEDIR"
+		;;
+esac
+
+PYBASEDIR="${BASEDIR}/.py3Env"
+# Is there a prepared Python environment??
+if [ -d "$PYBASEDIR" ] ; then
+	source "${PYBASEDIR}/bin/activate"
+	exec python "${BASEDIR}"/H_randomizer.py "$@"
+else
+	echo "UNCONFIGURED" 1>&2
+	exit 1
+fi

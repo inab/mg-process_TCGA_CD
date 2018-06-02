@@ -18,9 +18,9 @@ Pipelines
 
 Test Tool
 ---------
-.. automodule:: process_test
+.. automodule:: process_H_randomizer
 
-   This is a demonstration pipeline using the testTool.
+   This is a demonstration pipeline using the H_randomizer.
 
    Running from the command line
    =============================
@@ -47,9 +47,9 @@ Test Tool
       :linenos:
 
       cd /home/compss/code/mg-process-test
-      runcompss --lang=python process_test.py --config /home/compss/code/mg-process-test/tool_config/process_test.json --in_metadata /home/compss/code/mg-process-test/tests/json/input_test.json --out_metadata /home/compss/code/mg-process-test/tests/results.json
+      runcompss --lang=python H_randomizer.py --config /home/compss/code/mg-process-test/tool_config/process_H_randomizer.json --in_metadata /home/compss/code/mg-process-test/tests/json/input_test.json --out_metadata /home/compss/code/mg-process-test/tests/results.json
 
    Methods
    =======
-   .. autoclass:: process_test.process_test
+   .. autoclass:: H_randomizer.process_H_randomizer
       :members:

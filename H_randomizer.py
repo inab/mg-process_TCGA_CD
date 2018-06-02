@@ -26,11 +26,11 @@ import argparse
 from basic_modules.workflow import Workflow
 from utils import logger
 
-from tool.testTool import testTool
+from tool.H_randomizer import H_randomizer
 
 # ------------------------------------------------------------------------------
 
-class process_test(Workflow):
+class process_H_randomizer(Workflow):
     """
     Functions for demonstrating the pipeline set up.
     """
@@ -75,7 +75,7 @@ class process_test(Workflow):
         """
 
         # Initialise the test tool
-        tt_handle = testTool(self.configuration)
+        tt_handle = H_randomizer(self.configuration)
         tt_files, tt_meta = tt_handle.run(input_files, metadata, output_files)
 
         return (tt_files, tt_meta)
@@ -94,7 +94,7 @@ def main_json(config, in_metadata, out_metadata):
     logger.info("1. Instantiate and launch the App")
     from apps.jsonapp import JSONApp
     app = JSONApp()
-    result = app.launch(process_test,
+    result = app.launch(process_H_randomizer,
                         config,
                         in_metadata,
                         out_metadata)
