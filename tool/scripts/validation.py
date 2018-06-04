@@ -1,0 +1,79 @@
+#!/usr/bin/python
+#
+#   [2018] S. Capella-Gutierrez - salvador.capella@bsc.es
+#
+#   this script is free software: you can redistribute it and/or modify it under
+#   the terms of the GNU General Public License as published by the Free
+#   Software Foundation, the last available version.
+#
+#   this script is distributed in the hope that it will be useful, but WITHOUT
+#   ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+#   FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for
+#   more details on <http://www.gnu.org/licenses/>
+#
+
+import os
+import sys
+import random
+import hashlib
+import argparse
+
+if __name__ == "__main__":
+
+  parser = argparse.ArgumentParser()
+
+  parser.add_argument("--reference", dest = "refFile", required = True,  type = \
+    str, help = "Reference Proteome List")
+
+  parser.add_argument("--species_tag", dest = "species", default = "HUMAN",  
+    type = str, help = "Set mnemotechnic UNIPROT species label")
+
+  parser.add_argument("--input", dest = "inFile", required = True, type = str,
+    help = "Provide the input file to be validated")
+
+  args = parser.parse_args()
+
+  ## Check reference proteome file
+  if not os.path.isfile(args.refFile):
+    sys.exit(("ERROR: Check Reference Proteome File '%s'") % (args.refFile))
+
+  ## Check input file to be validated
+  if not os.path.isfile(args.inFile):
+    sys.exit(("ERROR: Check Input File '%s'") % (args.inFile))
+
+  ## Load proteome file 
+  all_proteins = []
+  for line in open(args.refFile, "r"):
+    ## Skip header
+    if line.find(args.species) == -1 or line.startswith("#"):
+      continue
+    ## We save field #2 which contains protein "Entry Name"
+    f = [e.strip() for e in line.split("\t")]
+    all_proteins.append(f[1])
+  print('[1]\t{0:14} => {1:10,g}\n'.format("All Proteins", len(all_proteins)))
+
+  if not all_proteins:
+    sys.exit(("ERROR: Check Reference Proteome File Content '%s'. Tag: [%s]") \
+      % (args.refFile, args.species))
+      
+  ## Load file to be validated 
+  input_proteins = []
+  for line in open(args.inFile, "r"):
+    ## Skip header
+    if line.startswith("#"):
+      continue
+    ## We save field #1 which contains protein "Entry Name"
+    f = [e.strip() for e in line.split("\t")]
+    input_proteins.append(f[0])
+    
+  print('[2]\t{0:14} => {1:10,g}\n'.format("Detected Proteins", \
+    len(input_proteins)))
+
+  if not input_proteins:
+    sys.exit(("ERROR: Check Input File Content '%s'. Tag: [%s]") % (args.inFile,
+      args.species))
+
+  dif = set(input_proteins) - set(all_proteins)
+  if dif != set():
+    sys.exit(("ERROR: Some entries (%d|%s) present at the Input File are not "
+      + "part of the Reference Proteome file") % (len(dif), "|".join(dif)))
