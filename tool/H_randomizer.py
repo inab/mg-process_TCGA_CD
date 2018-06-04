@@ -109,8 +109,8 @@ class H_randomizer(Tool):
         """
 
         results = self.test_writer(
-            input_files["input"],
-            output_files["output"]
+            input_files["data"],
+            output_files["metrics"]
         )
         results = compss_wait_on(results)
 
@@ -119,14 +119,14 @@ class H_randomizer(Tool):
             return {}, {}
 
         output_metadata = {
-            "output": Metadata(
-                data_type="<data_type>",
-                file_type="txt",
-                file_path=output_files["output"],
-                sources=[input_metadata["input"].file_path],
-                taxon_id=input_metadata["input"].taxon_id,
+            "metrics": Metadata(
+                data_type="metrics",
+                file_type="json",
+                file_path=output_files["metrics"],
+                sources=[input_metadata["data"].file_path],
+                #taxon_id=input_metadata["data"].taxon_id,
                 meta_data={
-                    "tool": "testTool"
+                    "tool": "H_randomizer"
                 }
             )
         }

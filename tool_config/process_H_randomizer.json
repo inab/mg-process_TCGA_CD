@@ -1,55 +1,74 @@
 {
   "_id": "H_randomizer",
-  "name": "Hemoglobin Randomizer Test",
-  "title": "Test Workflow",
+  "name": "Hemoglobine randomizer",
+  "title": "Hemoglobine randomizer",
   "short_description": "Generates file with some text",
+  "description": "A longer description goes here",
+  "url": "https://github.com/inab/mg-process_H_randomizer.git",
   "owner": {
-    "institution": "BSC-CNS",
-    "author": "José María Fernández",
-    "contact": "jose.m.fernandez@bsc.es",
+    "institution": "Barcelona Supercomputing Center",
+    "author": "Salvador Capella",
+    "contact": "salvador.capella@bsc.es",
     "url": "https://github.com/inab/mg-process_H_randomizer"
   },
   "external": true,
   "has_custom_viewer": false,
   "keywords": [
-    "dna"
+    "CAPRI"
   ],
+  "status": 1,
   "infrastructure": {
-    "memory": 1,
+    "memory": 2,
     "cpus": 1,
-    "executable": "/home/pmes/code/mg-process-test/H_randomizer.py",
-    "clouds": {}
+    "executable": "\/home\/vre\/bin\/H_randomizer",
+    "clouds": {
+      "mug-bsc": {
+        "launcher": "SGE",
+        "queue": "default.q"
+      }
+    }
   },
   "input_files": [
       {
-          "name": "input",
-          "description": "Input file",
-          "help": "path to the input file",
+          "name": "data",
+          "description": "Data to evaluate",
+          "help": "File containing the data to be evaluated",
           "file_type": ["TXT"],
           "data_type": [
-              "data_chip_seq", "data_idamid_seq", "data_mnase_seq", "data_rna_seq",
-              "data_wgbs", "data_hic"
+              "data_to_evaluate"
           ],
           "required": true,
           "allow_multiple": false
       }
   ],
+    "input_files_combinations": [
+        [
+            "data"
+        ]
+    ],
+    "input_files_combinations_internal": [
+        [
+            {
+                "data_to_evaluate": 1
+            }
+        ]
+    ],
   "arguments": [],
   "output_files": [
     {
-      "name": "output",
+      "name": "metrics",
       "required": true,
       "allow_multiple": false,
       "file": {
-        "file_type": "TXT",
+        "file_type": "JSON",
+        "data_type": "metrics",
+        "file_path": "metrics.json",
+        "compressed": "null",
         "meta_data": {
-          "visible": true,
+          "description": "Metrics derivated from the given input data",
           "tool": "H_randomizer",
-          "description": "Output"
-        },
-        "file_path": "test.txt",
-        "data_type": "text",
-        "compressed": ""
+          "visible": true
+        }
       }
     }
   ]
