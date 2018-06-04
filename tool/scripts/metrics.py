@@ -25,9 +25,9 @@ import argparse
 def metrics(inFile,refFile,species,goldenFiles,outFile,outlog=sys.stdout):
   ## Load proteome file 
   all_proteins = []
-  for line in open(args.refFile, "r"):
+  for line in open(refFile, "r"):
     ## Skip header
-    if line.find(args.species) == -1:
+    if line.find(species) == -1:
       continue
     ## We save field #2 which contains protein "Entry Name"
     f = [e.strip() for e in line.split("\t")]
@@ -43,7 +43,7 @@ def metrics(inFile,refFile,species,goldenFiles,outFile,outlog=sys.stdout):
     gold_datasets.setdefault(ref, set())
     for line in open(infile, "r"):
       ## Skip header
-      if line.find(args.species) == -1:
+      if line.find(species) == -1:
         continue
       ## We save field #1 which contains protein "Entry Name"
       f = [e.strip() for e in line.split("\t")]
@@ -54,7 +54,7 @@ def metrics(inFile,refFile,species,goldenFiles,outFile,outlog=sys.stdout):
       
   ## Load file to be validated 
   input_proteins = []
-  for line in open(args.inFile, "r"):
+  for line in open(inFile, "r"):
     ## Skip header
     if line.startswith("#"):
       continue
@@ -71,11 +71,11 @@ def metrics(inFile,refFile,species,goldenFiles,outFile,outlog=sys.stdout):
   true_positive = len(set(input_proteins) - set(remaining_proteins))
   false_positive = len(set(input_proteins) & set(remaining_proteins))
 
-  input_tag = os.path.split(args.inFile)[1].split(".")[0]
+  input_tag = os.path.split(inFile)[1].split(".")[0]
   print('[4]\t{0:60} => Size: {1:6,g} TP: {2:6,g} FP: {3:,g}'.format(input_tag,
         true_positive + false_positive, true_positive, false_positive),file=outlog)
             
-  outhandler = open(args.outFile, "w")  if args.outFile else sys.stdout
+  outhandler = open(outFile, "w")  if outFile else sys.stdout
             
   for ref in sorted(gold_datasets):
     overlap = gold_datasets[ref] & set(input_proteins)
