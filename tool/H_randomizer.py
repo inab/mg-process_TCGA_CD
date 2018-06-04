@@ -122,14 +122,14 @@ class H_randomizer(Tool):
             "metrics": Metadata(
 		# These ones are already known by the platform
 		# so comment them by now
-                #data_type="metrics",
-                #file_type="JSON",
+                data_type="metrics",
+                file_type="JSON",
                 #file_path=output_files["metrics"],
                 sources=[input_metadata["data"].file_path],
-                #taxon_id=input_metadata["data"].taxon_id,
-                #meta_data={
-                #    "tool": "H_randomizer"
-                #}
+                taxon_id=input_metadata["data"].taxon_id,
+                meta_data={
+                    "tool": "H_randomizer"
+                }
             )
         }
 
