@@ -60,8 +60,8 @@ class H_randomizer(Tool):
 
         self.configuration.update(configuration)
 
-    @task(returns=bool, file_in_loc=FILE_IN, file_out_loc=FILE_OUT, isModifier=False)
-    def compute_metrics(self, file_in_loc, file_out_loc):  # pylint: disable=no-self-use
+    @task(returns=bool, file_in_loc=FILE_IN, ref_dir_loc=FILE_IN, gold_dir_loc=FILE_IN, file_out_loc=FILE_OUT, isModifier=False)
+    def compute_metrics(self, file_in_loc, ref_dir_loc, gold_dir_loc, file_out_loc):  # pylint: disable=no-self-use
         """
         Count the number of characters in a file and return a file with the count
 
@@ -79,8 +79,8 @@ class H_randomizer(Tool):
         bool
             Writes the metrics to the file
         """
-        ref_dir_loc = self.configuration['reference_data']
-        gold_dir_loc = self.configuration['golden_data']
+        #ref_dir_loc = self.configuration['reference_data']
+        #gold_dir_loc = self.configuration['golden_data']
         species = self.configuration['species']
         ok_validation = validation(file_in_loc,ref_dir_loc,species)
         try:
@@ -124,6 +124,8 @@ class H_randomizer(Tool):
 
         results = self.compute_metrics(
             input_files["data"],
+            input_files['reference_data'],
+            input_files['golden_data'],
             output_files["metrics"]
         )
         results = compss_wait_on(results)
