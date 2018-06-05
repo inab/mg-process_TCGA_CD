@@ -60,7 +60,7 @@
       "required": true,
       "allow_multiple": false,
       "file": {
-        "file_type": "JSON",
+        "file_type": "TXT",
         "data_type": "metrics",
         "file_path": "metrics.json",
         "compressed": "null",

@@ -137,8 +137,9 @@ class H_randomizer(Tool):
 		# These ones are already known by the platform
 		# so comment them by now
                 data_type="metrics",
-                file_type="JSON",
+                file_type="TXT",
                 #file_path=output_files["metrics"],
+                # Reference and golden data set paths should also be here
                 sources=[input_metadata["data"].file_path],
                 taxon_id=input_metadata["data"].taxon_id,
                 meta_data={
