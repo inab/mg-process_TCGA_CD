@@ -2,9 +2,9 @@
     {
         "compressed": 0,
         "_id": "unique_file_id",
-        "data_type": "text",
-        "file_type": "bam",
-        "file_path": "tests/data/test_input.txt",
+        "data_type": "data_to_evaluate",
+        "file_type": "TXT",
+        "file_path": "tests/input/e0db4bf47b974874d35e20fb3eee5782.list",
         "sources": [],
         "taxon_id": 9606,
         "meta_data": {

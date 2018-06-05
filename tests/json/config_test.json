@@ -3,7 +3,7 @@
         {
             "required": true,
             "allow_multiple": false,
-            "name": "input",
+            "name": "data",
             "value": "unique_file_id"
         }
     ],
@@ -13,6 +13,18 @@
             "value": "run001"
         },
         {
+			"name": "reference_data",
+			"value": "tests/reference/uniprot-proteome:UP000005640+reviewed:yes.tab"
+		},
+        {
+			"name": "golden_data",
+			"value": "tests/gold"
+		},
+		{
+			"name": "species",
+			"value": "HUMAN"
+		},
+        {
             "name": "description",
             "value": null
         }
@@ -21,7 +33,7 @@
         {
             "required": true,
             "allow_multiple": false,
-            "name": "output",
+            "name": "metrics",
             "file": {
                 "file_type": "TXT",
                 "meta_data": {
@@ -29,7 +41,7 @@
                     "tool": "H_randomizer",
                     "description": "Output"
                 },
-                "file_path": "tests/data/test.txt",
+                "file_path": "tests/result.txt",
                 "data_type": "text",
                 "compressed": ""
             }

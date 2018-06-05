@@ -17,6 +17,7 @@
 from __future__ import print_function
 
 import sys
+import os
 
 from utils import logger
 
@@ -36,6 +37,9 @@ except ImportError:
 
 from basic_modules.tool import Tool
 from basic_modules.metadata import Metadata
+
+from .scripts.validation import validation
+from .scripts.metrics import metrics
 
 # ------------------------------------------------------------------------------
 
@@ -57,7 +61,7 @@ class H_randomizer(Tool):
         self.configuration.update(configuration)
 
     @task(returns=bool, file_in_loc=FILE_IN, file_out_loc=FILE_OUT, isModifier=False)
-    def test_writer(self, file_in_loc, file_out_loc):  # pylint: disable=no-self-use
+    def compute_metrics(self, file_in_loc, file_out_loc):  # pylint: disable=no-self-use
         """
         Count the number of characters in a file and return a file with the count
 
@@ -65,22 +69,32 @@ class H_randomizer(Tool):
         ----------
         file_in_loc : str
             Location of the input file
+        ref_dir_loc : str
+            Location of the reference and golden data sets directory
         file_out_loc : str
             Location of an output file
 
         Returns
         -------
         bool
-            Writes to the file, which is returned by pyCOMPSs to the defined location
+            Writes the metrics to the file
         """
+        ref_dir_loc = self.configuration['reference_data']
+        gold_dir_loc = self.configuration['golden_data']
+        species = self.configuration['species']
+        ok_validation = validation(file_in_loc,ref_dir_loc,species)
         try:
-            with open(file_in_loc, "r") as f_in:
-                with open(file_out_loc, "w") as file_handle:
-                    char_count = 0
-                    for line in f_in:
-                        char_count += len(line)
-
-                    file_handle.write("There are " + str(char_count) + " chacaters the file")
+            if ok_validation is True:
+                putative_goldenFiles = list(map(lambda g: os.path.join(gold_dir_loc,g), os.listdir(gold_dir_loc)))
+                goldenFiles = []
+                for infile in putative_goldenFiles:
+                    if not os.path.isfile(infile):
+                        logger.info("ERROR: Check Golden Reference File '%s'" % (infile))
+                        continue
+                    goldenFiles.append(infile)
+                metrics(file_in_loc,ref_dir_loc,species,goldenFiles,file_out_loc)
+            else:
+                logger.fatal(ok_validation)
         except IOError as error:
             logger.fatal("I/O error({0}): {1}".format(error.errno, error.strerror))
             return False
@@ -89,7 +103,7 @@ class H_randomizer(Tool):
 
     def run(self, input_files, input_metadata, output_files):
         """
-        The main function to run the test_writer tool
+        The main function to run the compute_metrics tool
 
         Parameters
         ----------
@@ -108,7 +122,7 @@ class H_randomizer(Tool):
             List of matching metadata for the returned files
         """
 
-        results = self.test_writer(
+        results = self.compute_metrics(
             input_files["data"],
             output_files["metrics"]
         )
