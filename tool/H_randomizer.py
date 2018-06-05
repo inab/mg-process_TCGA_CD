@@ -123,10 +123,10 @@ class H_randomizer(Tool):
         """
 
         results = self.compute_metrics(
-            input_files["data"],
-            input_files['reference_data'],
-            input_files['golden_data'],
-            output_files["metrics"]
+            input_files["data"].file_path,
+            input_files['reference_data'].file_path,
+            input_files['golden_data'].file_path,
+            output_files["metrics"].file_path
         )
         results = compss_wait_on(results)
 
