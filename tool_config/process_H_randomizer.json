@@ -2,8 +2,8 @@
   "_id": "H_randomizer",
   "name": "Hemoglobine randomizer",
   "title": "Hemoglobine randomizer",
-  "short_description": "Generates file with some text",
-  "description": "A longer description goes here",
+  "short_description": "Examplary workflow based on the randomization of proteins lists associated to specific cell function and\/or tissues",
+  "description": "This is an examplary workflow associated to proteins lists derived from the ReferenceHuman Genome (UniProt) as June 2018. The workflow computes the number of true positive and false positive from protein lists against predefined datasets e.g. hemoglobin, apoptosis and brain (as tissue). Input datasets are provided to facilitate the understanding of how the workflow works",
   "url": "https://github.com/inab/mg-process_H_randomizer.git",
   "owner": {
     "institution": "Barcelona Supercomputing Center",
@@ -14,6 +14,8 @@
   "external": true,
   "has_custom_viewer": false,
   "keywords": [
+    "EXAMPLE",
+    "HUMAN PROTEOME",
     "CAPRI"
   ],
   "status": 1,
@@ -41,6 +43,38 @@
           "allow_multiple": false
       }
   ],
+    "input_files_public_dir": [
+        {
+            "name": "reference_data",
+            "description": "Folder where reference data is located",
+            "help": "Folder where reference data is located",
+            "type": "hidden",
+            "value": "reference_data\/uniprot-proteome:UP000005640+reviewed:yes.tab",
+            "file_type": [
+                "TXT"
+            ],
+            "data_type": [
+                "configuration_file"
+            ],
+            "required": true,
+            "allow_multiple": false
+        },
+        {
+            "name": "golden_data",
+            "description": "Folder where golden data is located",
+            "help": "Folder where golden data is located",
+            "type": "hidden",
+            "value": "golden_dataset\/",
+            "file_type": [
+                "TXT"
+            ],
+            "data_type": [
+                "configuration_file"
+            ],
+            "required": true,
+            "allow_multiple": false
+        }
+    ],
     "input_files_combinations": [
         [
             "data"
@@ -53,14 +87,31 @@
             }
         ]
     ],
-  "arguments": [],
+    "arguments": [
+        {
+            "name": "species",
+            "description": "Target Species",
+            "help": "Species selection for this benchmarking event",
+            "type": "enum",
+            "enum_items": {
+                "description": [
+                    "Human"
+                ],
+                "name": [
+                    "HUMAN"
+                ]
+            },
+            "required": true,
+            "default": "HUMAN"
+        }
+    ],
   "output_files": [
     {
       "name": "metrics",
       "required": true,
       "allow_multiple": false,
       "file": {
-        "file_type": "TXT",
+        "file_type": "JSON",
         "data_type": "metrics",
         "file_path": "metrics.json",
         "compressed": "null",
