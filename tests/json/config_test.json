@@ -5,6 +5,18 @@
             "allow_multiple": false,
             "name": "data",
             "value": "unique_file_id"
+        },
+        {
+            "required": true,
+            "allow_multiple": false,
+            "name": "reference_data",
+            "value": "reference_data_id"
+        },
+        {
+            "required": true,
+            "allow_multiple": false,
+            "name": "golden_data",
+            "value": "golden_data_id"
         }
     ],
     "arguments": [
@@ -12,14 +24,6 @@
             "name": "project",
             "value": "run001"
         },
-        {
-			"name": "reference_data",
-			"value": "tests/reference/uniprot-proteome:UP000005640+reviewed:yes.tab"
-		},
-        {
-			"name": "golden_data",
-			"value": "tests/gold"
-		},
 		{
 			"name": "species",
 			"value": "HUMAN"
@@ -35,11 +39,11 @@
             "allow_multiple": false,
             "name": "metrics",
             "file": {
-                "file_type": "TXT",
+                "file_type": "JSON",
                 "meta_data": {
                     "visible": true,
                     "tool": "H_randomizer",
-                    "description": "Output"
+                    "description": "Metrics derivated from the given input data"
                 },
                 "file_path": "tests/result.txt",
                 "data_type": "text",
