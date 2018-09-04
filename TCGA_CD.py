@@ -26,11 +26,11 @@ import argparse
 from basic_modules.workflow import Workflow
 from utils import logger
 
-from tool.H_randomizer import H_randomizer
+from tool.TCGA_CD import TCGA_CD
 
 # ------------------------------------------------------------------------------
 
-class process_H_randomizer(Workflow):
+class process_TCGA_CD(Workflow):
     """
     Functions for demonstrating the pipeline set up.
     """
@@ -75,7 +75,7 @@ class process_H_randomizer(Workflow):
         """
 
         # Initialise the test tool
-        tt_handle = H_randomizer(self.configuration)
+        tt_handle = TCGA_CD(self.configuration)
         tt_files, tt_meta = tt_handle.run(input_files, metadata, output_files)
 
         return (tt_files, tt_meta)
@@ -94,7 +94,7 @@ def main_json(config, in_metadata, out_metadata):
     logger.info("1. Instantiate and launch the App")
     from apps.jsonapp import JSONApp
     app = JSONApp()
-    result = app.launch(process_H_randomizer,
+    result = app.launch(process_TCGA_CD,
                         config,
                         in_metadata,
                         out_metadata)
@@ -109,7 +109,7 @@ def main_json(config, in_metadata, out_metadata):
 if __name__ == "__main__":
 
     # Set up the command line parameters
-    PARSER = argparse.ArgumentParser(description="Index the genome file")
+    PARSER = argparse.ArgumentParser(description="TCGA Cancer Detection")
     PARSER.add_argument("--config", help="Configuration file")
     PARSER.add_argument("--in_metadata", help="Location of input metadata file")
     PARSER.add_argument("--out_metadata", help="Location of output metadata file")

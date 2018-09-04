@@ -1,0 +1,52 @@
+[
+    {
+        "_id": "unique_file_id_5b8d16e409ef13.34365802",
+        "file_path": "/home/vre/tests/data/myGenes.txt",
+        "file_type": "TXT",
+        "data_type": "data_to_evaluate",
+        "compressed": 0,
+        "user_id": "user_id",
+        "creation_time": {
+            "sec": 1535973092,
+            "usec": 0
+        },
+        "taxon_id": 0,
+        "meta_data": {
+            "type": "file",
+            "size": 0,
+            "project": "my_project_id",
+            "atime": {
+                "sec": 1535973092,
+                "usec": 0
+            },
+            "parentDir": "/home/vre/tests/data",
+            "lastAccess": {
+                "sec": 1535973092,
+                "usec": 0
+            }
+        },
+        "sources": []
+    },
+    {
+        "_id": "unique_file_id_5b8d16e409ef13.34365803_dummy",
+        "file_path": "/gpfs/vre/submission_public/reference_data/uniprot-proteome:UP000005640+reviewed:yes.tab",
+        "meta_data": [],
+        "sources": [],
+        "taxon_id": 0,
+        "data_type": "configuration_file",
+        "file_type": "TXT",
+        "user_id": "public",
+        "type": "file"
+    },
+    {
+        "_id": "unique_file_id_5b8d16e409ef13.34365804_dummy",
+        "file_path": "/gpfs/vre/submission_public/golden_dataset/",
+        "meta_data": [],
+        "sources": [],
+        "taxon_id": 0,
+        "data_type": "configuration_file",
+        "file_type": "TXT",
+        "user_id": "public",
+        "type": "dir"
+    }
+]

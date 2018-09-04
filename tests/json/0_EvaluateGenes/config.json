@@ -1,0 +1,73 @@
+{
+    "input_files": [
+        {
+            "name": "genes",
+            "value": "unique_file_id_5b8d16e409ef13.34365802",
+            "required": true,
+            "allow_multiple": false
+        },
+        {
+            "name": "reference_data",
+            "value": "unique_file_id_5b8d16e409ef13.34365803_dummy",
+            "required": true,
+            "allow_multiple": false
+        },
+        {
+            "name": "golden_data",
+            "value": "unique_file_id_5b8d16e409ef13.34365804_dummy",
+            "required": true,
+            "allow_multiple": false
+        }
+    ],
+    "arguments": [
+        {
+            "name": "execution",
+            "value": "/home/vre/tests/run000"
+        },
+        {
+            "name": "description",
+            "value": "This is a test execution"
+        },
+        {
+            "name": "cancer_type",
+            "value": [
+                "All"
+            ]
+        }
+    ],
+    "output_files": [
+        {
+            "name": "metrics",
+            "required": true,
+            "allow_multiple": false,
+            "file": {
+                "file_type": "JSON",
+                "data_type": "hic_reads",
+                "file_path": "/home/vre/tests/run000/metrics.json",
+                "compressed": "null",
+                "meta_data": {
+                    "description": "Metrics derivated from the given input data",
+                    "tool": "TCGA_CD",
+                    "visible": true
+                }
+            }
+        },
+        {
+            "name": "tar_view",
+            "required": true,
+            "allow_multiple": false,
+            "custom_visualizer": true,
+            "file": {
+                "file_type": "TAR",
+                "data_type": "tool_statistics",
+                "file_path": "/home/vre/tests/run000/results.tar.gz",
+                "compressed": "gzip",
+                "meta_data": {
+                    "description": "Metrics visualizer",
+                    "tool": "TCGA_CD",
+                    "visible": false
+                }
+            }
+        }
+    ]
+}

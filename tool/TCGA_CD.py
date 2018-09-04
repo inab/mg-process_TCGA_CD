@@ -38,12 +38,9 @@ except ImportError:
 from basic_modules.tool import Tool
 from basic_modules.metadata import Metadata
 
-from .scripts.validation import validation
-from .scripts.metrics import metrics
-
 # ------------------------------------------------------------------------------
 
-class H_randomizer(Tool):
+class TCGA_CD(Tool):
     """
     Tool for writing to a file
     """
