@@ -11,7 +11,12 @@ case "$BASEDIR" in
 		;;
 esac
 
-type -a docker > /dev/null || echo "UNCONFIGURED: No docker executable" 1>&2 && exit 1
+type -a docker > /dev/null
+
+if [ $? -ne 0 ] ; then
+	echo "UNCONFIGURED: No docker executable" 1>&2
+	exit 1
+fi
 
 PYBASEDIR="${BASEDIR}/.py2Env"
 # Is there a prepared Python environment??
