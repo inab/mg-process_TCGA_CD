@@ -2,31 +2,41 @@
     "input_files": [
         {
             "name": "genes",
-            "value": "unique_file_id_5b8d16e409ef13.34365802",
+            "value": "genes_dummy",
             "required": true,
             "allow_multiple": false
         },
         {
-            "name": "reference_data",
-            "value": "unique_file_id_5b8d16e409ef13.34365803_dummy",
+            "name": "metrics_ref_datasets",
+            "value": "metrics_ref_datasets_dummy",
             "required": true,
             "allow_multiple": false
         },
         {
-            "name": "golden_data",
-            "value": "unique_file_id_5b8d16e409ef13.34365804_dummy",
+            "name": "assessment_datasets",
+            "value": "assessment_datasets_dummy",
+            "required": true,
+            "allow_multiple": false
+        },
+        {
+            "name": "public_ref",
+            "value": "public_ref_dummy",
             "required": true,
             "allow_multiple": false
         }
     ],
     "arguments": [
         {
-            "name": "execution",
-            "value": "/home/vre/tests/run000"
+            "name": "project",
+            "value": "run000"
         },
         {
             "name": "description",
             "value": "This is a test execution"
+        },
+        {
+            "name": "participant_id",
+            "value": "Paco"
         },
         {
             "name": "cancer_type",
@@ -43,7 +53,7 @@
             "file": {
                 "file_type": "JSON",
                 "data_type": "hic_reads",
-                "file_path": "/home/vre/tests/run000/metrics.json",
+                "file_path": "results/metrics.json",
                 "compressed": "null",
                 "meta_data": {
                     "description": "Metrics derivated from the given input data",
@@ -60,7 +70,7 @@
             "file": {
                 "file_type": "TAR",
                 "data_type": "tool_statistics",
-                "file_path": "/home/vre/tests/run000/results.tar.gz",
+                "file_path": "results/results.tar.gz",
                 "compressed": "gzip",
                 "meta_data": {
                     "description": "Metrics visualizer",
