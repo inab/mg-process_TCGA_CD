@@ -58,7 +58,7 @@ class TCGA_CD(Tool):
         self.configuration.update(configuration)
 
     @task(returns=bool, file_in_loc=FILE_IN, ref_dir_loc=FILE_IN, gold_dir_loc=FILE_IN, file_out_loc=FILE_OUT, isModifier=False)
-    def compute_metrics(self, file_in_loc, ref_dir_loc, gold_dir_loc, file_out_loc):  # pylint: disable=no-self-use
+    def validate_and_assess(self, file_in_loc, ref_dir_loc, gold_dir_loc, file_out_loc):  # pylint: disable=no-self-use
         """
         Count the number of characters in a file and return a file with the count
 
@@ -119,7 +119,7 @@ class TCGA_CD(Tool):
             List of matching metadata for the returned files
         """
 
-        results = self.compute_metrics(
+        results = self.validate_and_assess(
             input_files["data"],
             input_files['reference_data'],
             input_files['golden_data'],
