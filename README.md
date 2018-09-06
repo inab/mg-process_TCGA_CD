@@ -5,4 +5,4 @@
 ```
 
 # Requirements
-Follow instructions in [INSTALL.md](INSTALL.md)
+Before running the wrapper, follow instructions in [INSTALL.md](INSTALL.md)

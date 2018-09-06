@@ -18,6 +18,9 @@ from __future__ import print_function
 
 import sys
 import os
+import configparser
+import subprocess
+import tempdir
 
 from utils import logger
 
@@ -52,36 +55,62 @@ class TCGA_CD(Tool):
         logger.info("Test writer")
         Tool.__init__(self)
 
+        local_config = configparser.configparser()
+        local_config.read(sys.argv[0] + '.ini')
+        self.docker_tag = local_config.get('tcga_cd','docker_tag','latest')
+	
+	
         if configuration is None:
             configuration = {}
 
         self.configuration.update(configuration)
 
-    @task(returns=bool, file_in_loc=FILE_IN, ref_dir_loc=FILE_IN, gold_dir_loc=FILE_IN, file_out_loc=FILE_OUT, isModifier=False)
-    def validate_and_assess(self, file_in_loc, ref_dir_loc, gold_dir_loc, file_out_loc):  # pylint: disable=no-self-use
-        """
-        Count the number of characters in a file and return a file with the count
-
-        Parameters
-        ----------
-        file_in_loc : str
-            Location of the input file
-        ref_dir_loc : str
-            Location of the reference and golden data sets directory
-        file_out_loc : str
-            Location of an output file
-
-        Returns
-        -------
-        bool
-            Writes the metrics to the file
-        """
-        #ref_dir_loc = self.configuration['reference_data']
-        #gold_dir_loc = self.configuration['golden_data']
-        species = self.configuration['species']
-        ok_validation = validation(file_in_loc,ref_dir_loc,species)
+    @task(returns=bool, genes_loc=FILE_IN, metrics_ref_dir_loc=FILE_IN, assess_dir_loc=FILE_IN, public_ref_dir_loc=FILE_IN, file_out_loc=FILE_OUT, isModifier=False)
+    def validate_and_assess(self, genes_loc, metrics_ref_dir_loc, assess_dir_loc, public_ref_dir_loc, file_out_loc):  # pylint: disable=no-self-use
+        participant_id = self.configuration['participant_id']
+        cancer_types = self.configuration['cancer_type']
+        
+        inputDir = os.path.dirname(genes_loc)
+        inputBasename = os.path.basename(genes_loc)
+        tag = self.docker_tag
+        uid = os.getuid()
+        
+        retval_stage = 'validation'
+        retval = subprocess.call([
+		"docker","run","--rm","-u", uid,
+		'-v',inputDir + ":/app/input:ro",
+		'-v',public_ref_dir_loc+":/app/ref:ro",
+		"tcga_validation:" + tag,
+		'-i',"/app/input/"+inputBasename,'-r','/app/ref/'
+	])
+	
+	if retval == 0:
+		retval_stage = 'metrics'
+		resultsDir = tempdir.mkdtemp()
+		metrics_params = [
+			"docker","run","--rm","-u", uid,
+			'-v',inputDir + ":/app/input:ro",
+			'-v',metrics_ref_dir_loc+":/app/metrics:ro",
+			'-v',resultsDir+":/app/results:rw",
+			"tcga_metrics:" + tag,
+			'-i',"/app/input/"+inputBasename,'-m','/app/metrics/','-p',participant_id,'-o','/app/results/',
+			'-c'
+		]
+		metrics_params.extend(cancer_types)
+		
+		metrics_retval = subprocess.call(metrics_params)
+		if metrics_retval == 0:
+			retval_stage = 'assessment'
+			assessment_retval = subprocess.call([
+				"docker","run","--rm","-u", uid,
+				'-v',assess_dir_loc+":/app/assess:ro",
+				'-v',resultsDir+":/app/results:rw",
+				"tcga_assessment:" + tag,
+				'-b',"/app/assess/",'-p','/app/results/','-o','/app/results/'
+			])
+	
         try:
-            if ok_validation is True:
+            if retval == 0:
                 putative_goldenFiles = list(map(lambda g: os.path.join(gold_dir_loc,g), os.listdir(gold_dir_loc)))
                 goldenFiles = []
                 for infile in putative_goldenFiles:
@@ -91,7 +120,7 @@ class TCGA_CD(Tool):
                     goldenFiles.append(infile)
                 metrics(file_in_loc,ref_dir_loc,species,goldenFiles,file_out_loc)
             else:
-                logger.fatal(ok_validation)
+                logger.fatal(retval_stage)
         except IOError as error:
             logger.fatal("I/O error({0}): {1}".format(error.errno, error.strerror))
             return False
@@ -120,9 +149,10 @@ class TCGA_CD(Tool):
         """
 
         results = self.validate_and_assess(
-            input_files["data"],
-            input_files['reference_data'],
-            input_files['golden_data'],
+            input_files["genes"],
+            input_files['metrics_ref_datasets'],
+            input_files['assessment_datasets'],
+            input_files['public_ref'],
             output_files["metrics"]
         )
         results = compss_wait_on(results)

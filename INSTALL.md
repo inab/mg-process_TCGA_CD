@@ -1,6 +1,6 @@
 # TCGA CD MuG/VRE wrapper install instructions (to be finished)
 
-## Install the docker images used by the wrapper
+## Install the data and docker images used by the wrapper
 
 * First, Docker must be installed and running in the machine. If it is not, you only have to run next command
 
@@ -18,18 +18,14 @@
  sudo apt install docker-ce
  ```
 
-* Second, download the code from [](https://github.com/inab/TCGA_visualizer)
+* Second, download the code and from [TCGA data visualizer](https://github.com/inab/TCGA_visualizer), and generate the docker images:
 
  ```bash
- THETAG=0.1
+ THETAG=0.2
  git clone -b "$THETAG" https://github.com/inab/TCGA_visualizer.git
  cd TCGA_visualizer
- for dockImg in tcga_assessment tcga_metrics tcga_validation ; do
- 	docker build -t "$dockImg":$THETAG "$dockImg"
- done
+ bash ./build.sh "$THETAG"
  ```
-
-TBD
 
 ## Install the wrapper dependencies
 
@@ -49,3 +45,11 @@ source .py3Env/bin/activate
 pip install --upgrade pip
 pip install -r requirements.txt
 ```
+
+And last, save the tag version used in the configuration file:
+
+```bash
+cat > TCGA_CD.py.ini <<EOF
+[tcga_cd]
+docker_tag=$THETAG
+EOF

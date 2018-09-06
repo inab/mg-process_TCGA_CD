@@ -1,3 +1,4 @@
+*.py.ini
 *.txt
 .python-version
 *.pyc
@@ -9,3 +10,4 @@
 mg_process_test.egg-info*
 .cache
 /tests/data/tmp
+/TCGA_visualizer
