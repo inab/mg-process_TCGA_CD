@@ -20,7 +20,12 @@ import sys
 import os
 import configparser
 import subprocess
-import tempdir
+import tempfile
+import json
+import fnmatch
+import tarfile
+import shutil
+import io
 
 from utils import logger
 
@@ -55,38 +60,42 @@ class TCGA_CD(Tool):
         logger.info("Test writer")
         Tool.__init__(self)
 
-        local_config = configparser.configparser()
+        local_config = configparser.ConfigParser()
         local_config.read(sys.argv[0] + '.ini')
-        self.docker_tag = local_config.get('tcga_cd','docker_tag','latest')
-	
+        self.docker_tag = local_config.get('tcga_cd','docker_tag')  if local_config.has_option('tcga_cd','docker_tag') else 'latest'
 	
         if configuration is None:
             configuration = {}
 
         self.configuration.update(configuration)
 
-    @task(returns=bool, genes_loc=FILE_IN, metrics_ref_dir_loc=FILE_IN, assess_dir_loc=FILE_IN, public_ref_dir_loc=FILE_IN, file_out_loc=FILE_OUT, isModifier=False)
-    def validate_and_assess(self, genes_loc, metrics_ref_dir_loc, assess_dir_loc, public_ref_dir_loc, file_out_loc):  # pylint: disable=no-self-use
+    @task(returns=bool, genes_loc=FILE_IN, metrics_ref_dir_loc=FILE_IN, assess_dir_loc=FILE_IN, public_ref_dir_loc=FILE_IN, metrics_loc=FILE_OUT, tar_view_loc=FILE_OUT, isModifier=False)
+    def validate_and_assess(self, genes_loc, metrics_ref_dir_loc, assess_dir_loc, public_ref_dir_loc, metrics_loc, tar_view_loc):  # pylint: disable=no-self-use
         participant_id = self.configuration['participant_id']
         cancer_types = self.configuration['cancer_type']
         
         inputDir = os.path.dirname(genes_loc)
         inputBasename = os.path.basename(genes_loc)
         tag = self.docker_tag
-        uid = os.getuid()
+        uid = str(os.getuid())
         
         retval_stage = 'validation'
-        retval = subprocess.call([
+        validation_params = [
 		"docker","run","--rm","-u", uid,
 		'-v',inputDir + ":/app/input:ro",
 		'-v',public_ref_dir_loc+":/app/ref:ro",
 		"tcga_validation:" + tag,
 		'-i',"/app/input/"+inputBasename,'-r','/app/ref/'
-	])
+	]
+	#print("DEBUG: "+'  '.join(validation_params),file=sys.stderr)
+        retval = subprocess.call(validation_params)
 	
+	resultsDir = None
+	resultsTarDir = None
 	if retval == 0:
 		retval_stage = 'metrics'
-		resultsDir = tempdir.mkdtemp()
+		resultsDir = tempfile.mkdtemp()
+		resultsTarDir = tempfile.mkdtemp()
 		metrics_params = [
 			"docker","run","--rm","-u", uid,
 			'-v',inputDir + ":/app/input:ro",
@@ -98,32 +107,48 @@ class TCGA_CD(Tool):
 		]
 		metrics_params.extend(cancer_types)
 		
-		metrics_retval = subprocess.call(metrics_params)
-		if metrics_retval == 0:
+		retval = subprocess.call(metrics_params)
+		if retval == 0:
 			retval_stage = 'assessment'
-			assessment_retval = subprocess.call([
+			retval = subprocess.call([
 				"docker","run","--rm","-u", uid,
 				'-v',assess_dir_loc+":/app/assess:ro",
 				'-v',resultsDir+":/app/results:rw",
+				'-v',resultsTarDir+":/app/resultsTar:rw",
 				"tcga_assessment:" + tag,
-				'-b',"/app/assess/",'-p','/app/results/','-o','/app/results/'
+				'-b',"/app/assess/",'-p','/app/results/','-o','/app/resultsTar/'
 			])
 	
         try:
-            if retval == 0:
-                putative_goldenFiles = list(map(lambda g: os.path.join(gold_dir_loc,g), os.listdir(gold_dir_loc)))
-                goldenFiles = []
-                for infile in putative_goldenFiles:
-                    if not os.path.isfile(infile):
-                        logger.info("ERROR: Check Golden Reference File '%s'" % (infile))
-                        continue
-                    goldenFiles.append(infile)
-                metrics(file_in_loc,ref_dir_loc,species,goldenFiles,file_out_loc)
-            else:
-                logger.fatal(retval_stage)
+		if retval == 0:
+			# Create the MuG/VRE metrics file
+			metricsArray = []
+			for metrics_file in os.listdir(resultsDir):
+				abs_metrics_file = os.path.join(resultsDir, metrics_file)
+				if fnmatch.fnmatch(metrics_file,"*.json") and os.path.isfile(abs_metrics_file):
+					with io.open(abs_metrics_file,mode='r',encoding="utf-8") as f:
+						metrics = json.load(f)
+						metricsArray.append(metrics)
+			
+			with io.open(metrics_loc, mode='w', encoding="utf-8") as f:
+				jdata = json.dumps(metricsArray, sort_keys=True, indent=4, separators=(',', ': '))
+				f.write(unicode(jdata,"utf-8"))
+			
+			# And create the MuG/VRE tar file
+			with tarfile.open(tar_view_loc,mode='w:gz',bufsize=1024*1024) as tar:
+				tar.add(resultsTarDir,arcname='data',recursive=True)
+		else:
+			logger.fatal(retval_stage)
+			return False
         except IOError as error:
-            logger.fatal("I/O error({0}): {1}".format(error.errno, error.strerror))
-            return False
+		logger.fatal("I/O error({0}): {1}".format(error.errno, error.strerror))
+		return False
+        finally:
+		# Cleaning up in any case
+		if resultsDir is not None:
+			shutil.rmtree(resultsDir)
+		if resultsTarDir is not None:
+			shutil.rmtree(resultsTarDir)
 
         return True
 
@@ -149,18 +174,20 @@ class TCGA_CD(Tool):
         """
 
         results = self.validate_and_assess(
-            input_files["genes"],
-            input_files['metrics_ref_datasets'],
-            input_files['assessment_datasets'],
-            input_files['public_ref'],
-            output_files["metrics"]
+            os.path.abspath(input_files["genes"]),
+            os.path.abspath(input_files['metrics_ref_datasets']),
+            os.path.abspath(input_files['assessment_datasets']),
+            os.path.abspath(input_files['public_ref']),
+            os.path.abspath(output_files["metrics"]),
+            os.path.abspath(output_files["tar_view"])
         )
         results = compss_wait_on(results)
 
         if results is False:
             logger.fatal("Test Writer: run failed")
             return {}, {}
-
+	
+	# BEWARE: Order DOES MATTER when there is a dependency from one output on another
         output_metadata = {
             "metrics": Metadata(
 		# These ones are already known by the platform
@@ -169,12 +196,23 @@ class TCGA_CD(Tool):
                 file_type="TXT",
                 #file_path=output_files["metrics"],
                 # Reference and golden data set paths should also be here
-                sources=[input_metadata["data"].file_path],
-                taxon_id=input_metadata["data"].taxon_id,
+                sources=[input_metadata["genes"].file_path],
                 meta_data={
-                    "tool": "H_randomizer"
+                    "tool": "TCGA_CD"
                 }
-            )
+            ),
+            "tar_view": Metadata(
+		# These ones are already known by the platform
+		# so comment them by now
+                data_type="tool_statistics",
+                file_type="TAR",
+                #file_path=output_files["metrics"],
+                # Reference and golden data set paths should also be here
+                sources=[output_files["metrics"]],
+                meta_data={
+                    "tool": "TCGA_CD"
+                }
+            ),
         }
 
         return (output_files, output_metadata)

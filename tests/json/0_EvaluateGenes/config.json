@@ -41,7 +41,7 @@
         {
             "name": "cancer_type",
             "value": [
-                "All"
+                "ALL"
             ]
         }
     ],
@@ -53,7 +53,7 @@
             "file": {
                 "file_type": "JSON",
                 "data_type": "hic_reads",
-                "file_path": "results/metrics.json",
+                "file_path": "metrics.json",
                 "compressed": "null",
                 "meta_data": {
                     "description": "Metrics derivated from the given input data",
@@ -70,7 +70,7 @@
             "file": {
                 "file_type": "TAR",
                 "data_type": "tool_statistics",
-                "file_path": "results/results.tar.gz",
+                "file_path": "results.tar.gz",
                 "compressed": "gzip",
                 "meta_data": {
                     "description": "Metrics visualizer",
