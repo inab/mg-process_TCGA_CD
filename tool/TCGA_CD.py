@@ -172,14 +172,18 @@ class TCGA_CD(Tool):
         output_metadata : dict
             List of matching metadata for the returned files
         """
-
+	project_path = self.configuration.get('project','.')
+	participant_id = self.configuration['participant_id']
+	metrics_path = os.path.abspath(output_files.get("metrics",os.path.join(project_path,participant_id+'.json')))
+	tar_view_path = os.path.abspath(output_files.get("tar_view",os.path.join(project_path,participant_id+'.tar.gz')))
+	
         results = self.validate_and_assess(
             os.path.abspath(input_files["genes"]),
             os.path.abspath(input_files['metrics_ref_datasets']),
             os.path.abspath(input_files['assessment_datasets']),
             os.path.abspath(input_files['public_ref']),
-            os.path.abspath(output_files["metrics"]),
-            os.path.abspath(output_files["tar_view"])
+            metrics_path,
+            tar_view_path
         )
         results = compss_wait_on(results)
 
@@ -194,7 +198,7 @@ class TCGA_CD(Tool):
 		# so comment them by now
                 data_type="metrics",
                 file_type="TXT",
-                #file_path=output_files["metrics"],
+                file_path=metrics_path,
                 # Reference and golden data set paths should also be here
                 sources=[input_metadata["genes"].file_path],
                 meta_data={
@@ -206,9 +210,9 @@ class TCGA_CD(Tool):
 		# so comment them by now
                 data_type="tool_statistics",
                 file_type="TAR",
-                #file_path=output_files["metrics"],
+                file_path=tar_view_path,
                 # Reference and golden data set paths should also be here
-                sources=[output_files["metrics"]],
+                sources=[metrics_path],
                 meta_data={
                     "tool": "TCGA_CD"
                 }

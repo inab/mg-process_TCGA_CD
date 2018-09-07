@@ -28,7 +28,7 @@
     "arguments": [
         {
             "name": "project",
-            "value": "run000"
+            "value": "."
         },
         {
             "name": "description",
