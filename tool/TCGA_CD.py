@@ -36,8 +36,8 @@ try:
     from pycompss.api.task import task
     from pycompss.api.api import compss_wait_on
 except ImportError:
-    logger.warn("[Warning] Cannot import \"pycompss\" API packages.")
-    logger.warn("          Using mock decorators.")
+#    logger.warn("[Warning] Cannot import \"pycompss\" API packages.")
+#    logger.warn("          Using mock decorators.")
 
     from utils.dummy_pycompss import FILE_IN, FILE_OUT # pylint: disable=ungrouped-imports
     from utils.dummy_pycompss import task # pylint: disable=ungrouped-imports
@@ -57,7 +57,7 @@ class TCGA_CD(Tool):
         """
         Init function
         """
-        logger.info("Test writer")
+        logger.info("TCGA Cancer Drivers assessment pipeline")
         Tool.__init__(self)
 
         local_config = configparser.ConfigParser()
@@ -138,7 +138,8 @@ class TCGA_CD(Tool):
 			with tarfile.open(tar_view_loc,mode='w:gz',bufsize=1024*1024) as tar:
 				tar.add(resultsTarDir,arcname='data',recursive=True)
 		else:
-			logger.fatal(retval_stage)
+			logger.fatal("ERROR: TCGA CD evaluation failed, in step "+retval_stage)
+			raise Exception("ERROR: TCGA CD evaluation failed, in step "+retval_stage)
 			return False
         except IOError as error:
 		logger.fatal("I/O error({0}): {1}".format(error.errno, error.strerror))
@@ -174,8 +175,18 @@ class TCGA_CD(Tool):
         """
 	project_path = self.configuration.get('project','.')
 	participant_id = self.configuration['participant_id']
-	metrics_path = os.path.abspath(output_files.get("metrics",os.path.join(project_path,participant_id+'.json')))
-	tar_view_path = os.path.abspath(output_files.get("tar_view",os.path.join(project_path,participant_id+'.tar.gz')))
+	
+	metrics_path = output_files.get("metrics")
+	if metrics_path is None:
+		metrics_path = os.path.join(project_path,participant_id+'.json')
+	metrics_path = os.path.abspath(metrics_path)
+	output_files['metrics'] = metrics_path
+	
+	tar_view_path = output_files.get("tar_view")
+	if tar_view_path is None:
+		tar_view_path = os.path.join(project_path,participant_id+'.tar.gz')
+	tar_view_path = os.path.abspath(tar_view_path)
+	output_files['tar_view'] = tar_view_path
 	
         results = self.validate_and_assess(
             os.path.abspath(input_files["genes"]),
@@ -188,7 +199,8 @@ class TCGA_CD(Tool):
         results = compss_wait_on(results)
 
         if results is False:
-            logger.fatal("Test Writer: run failed")
+            logger.fatal("TCGA CD pipeline failed. See logs")
+            raise Exception("TCGA CD pipeline failed. See logs")
             return {}, {}
 	
 	# BEWARE: Order DOES MATTER when there is a dependency from one output on another
