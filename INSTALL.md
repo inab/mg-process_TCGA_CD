@@ -28,7 +28,7 @@
 * Second, download the code and from [TCGA data visualizer](https://github.com/inab/TCGA_visualizer), generate the docker images and save the tag:
 
  ```bash
- THETAG=0.2
+ THETAG=0.3
  git clone -b "$THETAG" https://github.com/inab/TCGA_visualizer.git
  cd TCGA_visualizer
  bash ./build.sh "$THETAG"
