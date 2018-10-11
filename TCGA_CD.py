@@ -132,4 +132,3 @@ if __name__ == "__main__":
         sys._run_from_cmdl = True  # pylint: disable=protected-access
 
     RESULTS = main_json(CONFIG, IN_METADATA, OUT_METADATA)
-    print(RESULTS)
