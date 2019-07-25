@@ -25,11 +25,11 @@
  sudo usermod -a -G docker $USER
  ```
 
-* Second, download the code and from [TCGA data visualizer](https://github.com/inab/TCGA_visualizer), generate the docker images and save the tag:
+* Second, download the code and from [TCGA benchmarking Dockers](https://github.com/inab/TCGA_benchmarking_dockers.git), generate the docker images and save the tag:
 
  ```bash
  THETAG=0.3.1
- git clone -b "$THETAG" https://github.com/inab/TCGA_visualizer.git
+ git clone -b "$THETAG" https://github.com/inab/TCGA_benchmarking_dockers.git
  cd TCGA_visualizer
  bash ./build.sh "$THETAG"
  cd ..
