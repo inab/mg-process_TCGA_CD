@@ -30,7 +30,7 @@
  ```bash
  THETAG=0.3.1
  git clone -b "$THETAG" https://github.com/inab/TCGA_benchmarking_dockers.git
- cd TCGA_visualizer
+ cd TCGA_benchmarking_dockers
  bash ./build.sh "$THETAG"
  cd ..
  cat > TCGA_CD.py.ini <<EOF
